@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Gestión de Productos</title>
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="mb-4">Crear Producto</h1>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ messages[0] }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulario creación -->
+    <form method="POST" class="mb-5">
+      <div class="mb-3">
+        <label for="nombre_producto" class="form-label">Nombre Producto</label>
+        <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" required />
+      </div>
+      <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <input type="text" class="form-control" id="estado" name="estado" required />
+      </div>
+      <div class="mb-3">
+        <label for="clasificacion" class="form-label">Clasificación</label>
+        <input type="text" class="form-control" id="clasificacion" name="clasificacion" required />
+      </div>
+      <div class="mb-3">
+        <label for="precio" class="form-label">Precio</label>
+        <input type="text" class="form-control" id="precio" name="precio" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Guardar Producto</button>
+    </form>
+
+    <!-- Tabla productos -->
+    <h2>Lista de Productos</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Clasificación</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for producto in productos %}
+        <tr>
+          <td>{{ producto.id_producto }}</td>
+          <td>{{ producto.nombre_producto }}</td>
+          <td>{{ producto.estado }}</td>
+          <td>{{ producto.clasificacion }}</td>
+          <td>{{ producto.precio }}</td>
+          <td>
+            <!-- Botón Editar -->
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editarModal{{ producto.id_producto }}">Editar</button>
+
+            <!-- Formulario Eliminar -->
+            <form method="POST" action="{{ url_for('eliminar_producto', id_producto=producto.id_producto) }}" style="display:inline;" onsubmit="return confirm('¿Seguro que quieres eliminar este producto?');">
+              <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+
+        <!-- Modal Editar -->
+        <div class="modal fade" id="editarModal{{ producto.id_producto }}" tabindex="-1" aria-labelledby="editarModalLabel{{ producto.id_producto }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <form method="POST" action="{{ url_for('editar_producto', id_producto=producto.id_producto) }}">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editarModalLabel{{ producto.id_producto }}">Editar Producto</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="nombre_producto_{{ producto.id_producto }}" class="form-label">Nombre Producto</label>
+                    <input type="text" class="form-control" id="nombre_producto_{{ producto.id_producto }}" name="nombre_producto" value="{{ producto.nombre_producto }}" required />
+                  </div>
+                  <div class="mb-3">
+                    <label for="estado_{{ producto.id_producto }}" class="form-label">Estado</label>
+                    <input type="text" class="form-control" id="estado_{{ producto.id_producto }}" name="estado" value="{{ producto.estado }}" required />
+                  </div>
+                  <div class="mb-3">
+                    <label for="clasificacion_{{ producto.id_producto }}" class="form-label">Clasificación</label>
+                    <input type="text" class="form-control" id="clasificacion_{{ producto.id_producto }}" name="clasificacion" value="{{ producto.clasificacion }}" required />
+                  </div>
+                  <div class="mb-3">
+                    <label for="precio_{{ producto.id_producto }}" class="form-label">Precio</label>
+                    <input type="text" class="form-control" id="precio_{{ producto.id_producto }}" name="precio" value="{{ producto.precio }}" required />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
